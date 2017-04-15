@@ -1,0 +1,88 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<title>Facelet Title</title>
+</h:head>
+<h:body>
+	<h:form>
+		<p>Welcome #{login.user}</p>
+		<h:commandLink action="#{login.logout}" value="Logout"></h:commandLink>
+		
+		<p:panel id="panel" header="Edit User" style="margin-bottom:10px;">
+			<h:panelGrid id="search" columns="4">
+				<h:outputLabel value="Doctor Name :" for="doctorName" />
+				<p:inputText id="doctorName"
+					value="#{searchController.doctorName}" label="doctorName">
+					
+				</p:inputText>
+
+				<p:commandButton value="Search"
+					update=":search:panel,selectedUserList"
+					actionListener="#{searchController.searchNFCUserByUserName}"
+					type="buttonSearch" />
+
+				<p:commandButton value="Clear"
+					onclick="PF('confirmationSearchClear').show()" type="buttonSearchClear">
+				</p:commandButton>
+				<h:message id="searchCountermessage" for="doctorName"
+					style="color:red" />
+
+				<p:confirmDialog message="Do you want to clear search results?"
+					showEffect="explode" hideEffect="explode" header="Confirmation"
+					severity="alert" widgetVar="confirmationSearchClear">
+					<p:commandButton value="Yes"
+						update=":search:panel,selectedUserList"
+						oncomplete="PF('confirmationSearchClear').hide()"
+						actionListener="#{searchController.clearSearch}"
+						immediate="true">
+						<p:resetInput target=":search:panel" />
+					</p:commandButton>
+					<p:commandButton value="No"
+						onclick="PF('confirmationSearchClear').hide()" type="buttonSearchClear" />
+				</p:confirmDialog>
+
+			</h:panelGrid>
+
+			<h:panelGrid id="selectedUserList">
+				<!-- Data Table -->
+				<p:dataTable id="doctors" var="doctor"
+					value="#{searchController.searchApointmentsList}">
+
+					<p:column headerText="Docotor Name">
+						<h:outputText value="#{doctor.docName}" />
+					</p:column>
+
+					<p:column headerText="Hospital">
+						<h:outputText value="#{doctor.hospital}" />
+					</p:column>
+
+					<p:column headerText="Charge">
+						<h:outputText value="#{doctor.charge}" />
+					</p:column>
+					<p:column headerText="Apointment Date">
+						<h:outputText value="#{doctor.apoDate}" >
+						<f:convertDateTime pattern="dd-MM-yyyy HH:mm:ss"></f:convertDateTime>
+						</h:outputText>						
+					</p:column>
+					
+
+					<p:column style="width:4%" headerText="Pay">
+						<p:commandButton id="selectButton" update=":createUser:panel"
+							icon="ui-icon-search" title="Pay"
+							action="#{searchController.viewUser}" resetValues="true">
+							<f:setPropertyActionListener value="#{doctor}"
+								target="#{searchController.loadPaymentPage}" />
+						</p:commandButton>
+					</p:column>
+
+				</p:dataTable>
+			</h:panelGrid>
+		</p:panel>
+	</h:form>
+</h:body>
+</html>
